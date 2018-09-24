@@ -30,7 +30,7 @@ public class ThreadWorkFile extends Thread {
     public void run() {
 
 //        Чтение из файла
-        System.out.println("Читаем файл " + fileDest);
+        Main.LOGGER.info("Читаем файл " + fileDest);
         StringBuffer buffer = new StringBuffer();
         try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(fileDest),"UTF-8")){
             BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -54,10 +54,10 @@ public class ThreadWorkFile extends Thread {
 
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.LOGGER.error(e.getMessage());
         }
 
-        System.out.println("Поток выполнился обрабатывать файл " + fileDest);
+        Main.LOGGER.info("Читаем файл " + fileDest);
 
 //        Создадим stream строк из предложений
         //String[] strings = Pattern.compile("\\.|\\?|\\!").split(buffer.toString().replace("...","."));

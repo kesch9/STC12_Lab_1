@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 
 public class WordsEnteringTextsImplement implements WordsEnteringTexts {
 
-    private int sizeBigFileThread = 60;
+    private int sizeBigFileThread = 30;
 
     ConcurrentSkipListSet<String> concurrentSkipListSetAllThread = new ConcurrentSkipListSet<>();
 
@@ -17,14 +17,14 @@ public class WordsEnteringTextsImplement implements WordsEnteringTexts {
         ExecutorService threadpool = Executors.newCachedThreadPool();
         int k = sources.length;
         int j=0;
-        System.out.println("Количество файлов " + k);
+        Main.LOGGER.info("Количество файлов " + k);
         while (k != 0){
             long skip = 0;
             for (int i=0; i<10; i++) {
                 File file = new File(sources[j]);;
                 if(file.length() > 100000000L){
 //                    Запустим десять потоков для большого файла
-                    System.out.println("Обработаем большой файл");
+                    Main.LOGGER.info("Обработаем большой файл");
                     skip = new File(sources[j]).getTotalSpace()/sizeBigFileThread;
                     for (int u=0; u<sizeBigFileThread; u++){
                         threadpool.submit(new ThreadWorkFile(sources[j],words,concurrentSkipListSetAllThread,skip));
@@ -35,27 +35,27 @@ public class WordsEnteringTextsImplement implements WordsEnteringTexts {
                     threadpool.submit(new ThreadWorkFile(sources[j], words, concurrentSkipListSetAllThread, skip));
                 }
                 k -= 1;
-                System.out.println("Осталось обработать файлов " + k );
+                Main.LOGGER.info("Осталось обработать файлов " + k );
                 j += 1;
-                System.out.println("Количество потоков создано " + j);
+                Main.LOGGER.info("Количество потоков создано " + j);
                 if (k == 0){break;}
             }
-            System.out.println("Создали потоки");
+            Main.LOGGER.info("Создали потоки");
             threadpool.shutdown();
             while (!threadpool.isTerminated()){}
             threadpool = Executors.newCachedThreadPool();
-            System.out.println("Потоки закончили работать");
+            Main.LOGGER.info("Потоки закончили работать");
         }
         try {
             FileWriter fileWriter = new FileWriter(res);
             for (String s : concurrentSkipListSetAllThread){
-                System.out.println("Строка записи: " + s);
+                Main.LOGGER.info("Строка записи: " + s);
                 fileWriter.write("[ " + s + " ]");
                 fileWriter.flush();
             }
             fileWriter.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            Main.LOGGER.error(e.getMessage());
         }
     }
 }
